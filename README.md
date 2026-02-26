@@ -21,9 +21,15 @@ Built for Linux-based router firmware like **DD-WRT** and **OpenWRT**, and suppo
 
 ## Screenshots
 
-docs/screenshots/Screenshot1.png
-docs/screenshots/Screenshot2.png
-docs/screenshots/Screenshot3.png
+## Screenshots
+
+<img src="docs/screenshots/Screenshot1.png" width="900">
+<br><br>
+
+<img src="docs/screenshots/Screenshot2.png" width="900">
+<br><br>
+
+<img src="docs/screenshots/Screenshot3.png" width="900">
 
 ## Requirements
 
