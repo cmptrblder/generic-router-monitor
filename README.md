@@ -21,11 +21,9 @@ Built for Linux-based router firmware like **DD-WRT** and **OpenWRT**, and suppo
 
 ## Screenshots
 
-Add screenshots to `docs/screenshots/` and link them here.
-
-Example:
-- `docs/screenshots/device.png`
-- `docs/screenshots/entities.png`
+https://github.com/cmptrblder/generic-router-monitor/blob/main/docs/screenshots/Screenshot1.png
+https://github.com/cmptrblder/generic-router-monitor/blob/main/docs/screenshots/Screenshot2.png
+https://github.com/cmptrblder/generic-router-monitor/blob/main/docs/screenshots/Screenshot3.png
 
 ## Requirements
 
