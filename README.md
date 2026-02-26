@@ -1,7 +1,7 @@
 # Generic Router Monitor (Home Assistant)  
-![hassfest](https://github.com/REPLACE_WITH_GH_OWNER/generic-router-monitor/actions/workflows/hassfest.yml/badge.svg)
+![hassfest](https://github.com/cmptrblder/generic-router-monitor/actions/workflows/hassfest.yml/badge.svg)
 ![HACS](https://img.shields.io/badge/HACS-Default-orange.svg)
-![License](https://img.shields.io/github/license/REPLACE_WITH_GH_OWNER/generic-router-monitor)
+![License](https://img.shields.io/github/license/cmptrblder/generic-router-monitor)
 
 A production-safe Home Assistant custom integration that monitors **routers via SSH** (plus ping).  
 Built for Linux-based router firmware like **DD-WRT** and **OpenWRT**, and supports **mixed “modern” and “legacy” SSH crypto** on a per-router basis.
