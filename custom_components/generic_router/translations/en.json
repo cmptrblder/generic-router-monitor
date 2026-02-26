@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Generic Router Monitor",
+        "description": "Monitor a router using ping + SSH.",
+        "data": {
+          "host": "Host/IP",
+          "port": "SSH Port",
+          "username": "SSH Username",
+          "password": "SSH Password",
+          "ssh_mode": "SSH Mode"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "domain": "generic_router",
+  "name": "Generic Router Monitor",
+  "version": "4.0.0",
+  "config_flow": true,
+  "iot_class": "local_polling",
+  "integration_type": "device",
+  "requirements": ["asyncssh==2.14.2"],
+  "codeowners": []
+}

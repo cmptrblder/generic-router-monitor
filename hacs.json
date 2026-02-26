@@ -1,0 +1,7 @@
+{
+  "name": "Generic Router Monitor",
+  "content_in_root": false,
+  "domains": ["generic_router"],
+  "homeassistant": "2024.6.0",
+  "render_readme": true
+}
