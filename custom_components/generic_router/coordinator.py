@@ -11,8 +11,13 @@ import asyncssh
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
-    CONF_HOST, CONF_PORT, CONF_USERNAME, CONF_PASSWORD, CONF_SSH_MODE,
-    SSH_MODE_MODERN, SSH_MODE_LEGACY
+    CONF_HOST,
+    CONF_PORT,
+    CONF_USERNAME,
+    CONF_PASSWORD,
+    CONF_SSH_MODE,
+    SSH_MODE_MODERN,
+    SSH_MODE_LEGACY,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -54,7 +59,12 @@ class GenericRouterCoordinator(DataUpdateCoordinator[RouterData]):
     async def _ping_online(self) -> bool:
         try:
             proc = await asyncio.create_subprocess_exec(
-                "ping", "-c", "2", "-W", "1", self.host,
+                "ping",
+                "-c",
+                "2",
+                "-W",
+                "1",
+                self.host,
                 stdout=asyncio.subprocess.DEVNULL,
                 stderr=asyncio.subprocess.DEVNULL,
             )
@@ -64,33 +74,39 @@ class GenericRouterCoordinator(DataUpdateCoordinator[RouterData]):
             return False
 
     async def _ssh_cmd(self, cmd: str) -> str:
+        """Run a command via SSH and return stdout as text.
+
+        IMPORTANT: We intentionally DO NOT use conn.run() here.
+        HA/Python/asyncssh updates changed SSHCompletedProcess behavior.
+        create_process()+communicate() is stable across versions.
+        """
         try:
+            connect_kwargs: dict = dict(
+                host=self.host,
+                port=self.port,
+                username=self.username,
+                password=self.password,
+                known_hosts=None,
+                login_timeout=10,
+            )
+
             if self.ssh_mode == SSH_MODE_LEGACY:
-                conn = await asyncssh.connect(
-                    self.host,
-                    port=self.port,
-                    username=self.username,
-                    password=self.password,
-                    known_hosts=None,
-                    login_timeout=10,
-                    kex_algs=["diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1"],
-                    server_host_key_algs=["ssh-rsa"],
-                    encryption_algs=["aes128-cbc", "aes256-cbc", "aes128-ctr"],
-                )
-            else:
-                # Modern: do not override algorithms
-                conn = await asyncssh.connect(
-                    self.host,
-                    port=self.port,
-                    username=self.username,
-                    password=self.password,
-                    known_hosts=None,
-                    login_timeout=10,
+                connect_kwargs.update(
+                    {
+                        "kex_algs": ["diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1"],
+                        "server_host_key_algs": ["ssh-rsa"],
+                        "encryption_algs": ["aes128-cbc", "aes256-cbc", "aes128-ctr"],
+                    }
                 )
 
-            async with conn:
-                result = await conn.run(cmd, check=False)
-                return (result.stdout or "").strip()
+            async with asyncssh.connect(**connect_kwargs) as conn:
+                # Force text output; DD-WRT is fine with utf-8/ascii
+                process = await conn.create_process(cmd, encoding="utf-8")
+                stdout, _stderr = await process.communicate()
+                if stdout is None:
+                    return ""
+                return str(stdout).strip()
+
         except Exception as err:
             raise UpdateFailed(f"SSH error: {err}") from err
 
@@ -168,8 +184,12 @@ class GenericRouterCoordinator(DataUpdateCoordinator[RouterData]):
         if not online:
             return RouterData(False, None, None, None, self._wan_if, None, None)
 
-        # Single SSH run for minimal overhead
-        cmd = "echo __UPTIME__; cat /proc/uptime; echo __LOAD__; cat /proc/loadavg; echo __FREE__; free; echo __NET__; cat /proc/net/dev"
+        cmd = (
+            "echo __UPTIME__; cat /proc/uptime; "
+            "echo __LOAD__; cat /proc/loadavg; "
+            "echo __FREE__; free; "
+            "echo __NET__; cat /proc/net/dev"
+        )
         raw = await self._ssh_cmd(cmd)
 
         def section(name: str) -> str:
@@ -192,6 +212,7 @@ class GenericRouterCoordinator(DataUpdateCoordinator[RouterData]):
 
         cur_if = self._parse_proc_net_dev(section("NET"))
         now = time.time()
+
         rx_mbps = None
         tx_mbps = None
 
